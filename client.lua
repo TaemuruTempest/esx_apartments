@@ -23,12 +23,9 @@ function createBlips()
         end
 
         if v.kind == Types.Condominiums and Config.EnableCondominiums then
-            marker = split(v.enter_marker, ",")
-            print(marker[1] .. " " .. marker[2] .. " " .. marker[3])
+            marker = StringToCoords(v.enter_marker)
 
-            local blip = AddBlipForCoord(tonumber(marker[1]),
-                                         tonumber(marker[2]),
-                                         tonumber(marker[3]))
+            local blip = AddBlipForCoord(marker.x, marker.y, marker.z)
 
             SetBlipSprite(blip, blipConfig.Sprite)
             SetBlipDisplay(blip, blipConfig.Display)
