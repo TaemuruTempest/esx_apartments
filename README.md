@@ -13,6 +13,7 @@
 
 - Define apartments blips/markers via database
 - Buy/Rent apartments / flats at specified block buildings
+- Rent motel rooms
 - Sell back at defined % rates
 - Key management: option to give them to other players
 - doorbell: call player's phone
