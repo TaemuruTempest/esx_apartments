@@ -19,6 +19,7 @@
 - doorbell: call player's phone
 - invite other players (share house inventory)
 - global/local inventory (i.e. deposit on one house prevents withdraw from another location)
+- i18n
 
 #### Nice to have
 
