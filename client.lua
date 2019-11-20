@@ -79,7 +79,7 @@ function EnterProperty(v)
     SetEntityCoords(playerPed, coords.x, coords.y, coords.z)
 
     -- Fade in
-    NetworkFadeInEntity(GetPlayerPed(-1), 0)
+    NetworkFadeInEntity(playerPed, 0)
     Wait(1000)
     DoScreenFadeIn(1000)
     while IsScreenFadingIn() do Citizen.Wait(0) end
