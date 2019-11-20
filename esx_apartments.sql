@@ -19,5 +19,5 @@ CREATE TABLE `apartments_available` (
 );
 
 INSERT INTO `apartments_available` VALUES
-	(1, 'LowEndApartment', 'Basic Apartment', 0, '254.95,-1012.81,29.27', '266.09,-1006.75,-100.74', '265.91,-1005.05,-99.56', '254.95,-1012.81,29.27', NULL, NULL, NULL, NULL, 500, 400000)
+	(1, 'LowEndApartment', 'Basic Apartment', 0, '254.79,-1013.30,29.27', '266.09,-1006.75,-100.74', '265.91,-1005.05,-99.56', '254.79,-1013.30,29.27', NULL, NULL, NULL, NULL, 500, 400000)
 ;

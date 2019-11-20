@@ -40,3 +40,31 @@ function createBlips()
 
     end
 end
+
+-- Show markers
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(0)
+
+        local coords = GetEntityCoords(GetPlayerPed(-1))
+        for k, v in pairs(Apartments) do
+            -- Enter marker
+            marker = StringToCoords(v.enter_marker)
+            local distance = GetDistanceBetweenCoords(coords, marker.x,
+                                                      marker.y, marker.z, true)
+            -- show marker
+            if distance < Config.DrawDistance then
+                DrawMarker(Config.Markers.Enter.Type, marker.x, marker.y,
+                           marker.z, 0, 0, 0, 0, 0, 0,
+                           Config.Markers.Enter.Size.x,
+                           Config.Markers.Enter.Size.y,
+                           Config.Markers.Enter.Size.z,
+                           Config.Markers.Enter.Colour.r,
+                           Config.Markers.Enter.Colour.g,
+                           Config.Markers.Enter.Colour.b,
+                           Config.Markers.Enter.Alpha, 0, 0, 0, 1)
+            end
+
+        end
+    end
+end)
