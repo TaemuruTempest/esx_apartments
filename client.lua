@@ -56,8 +56,33 @@ function OpenMenu(v)
         title = 'test',
         align = Config.MenuPosition,
         elements = elements
-    }, function(data, menu) menu.close() end)
+    }, function(data, menu)
+        menu.close()
 
+        if data.current.value == 'visit' then EnterProperty(v) end
+
+    end)
+
+end
+
+function EnterProperty(v)
+    local playerPed = GetPlayerPed(-1)
+
+    -- Fade out
+    DoScreenFadeOut(1000)
+    while IsScreenFadingOut() do Citizen.Wait(0) end
+    NetworkFadeOutEntity(playerPed, true, false)
+    Wait(1000)
+
+    -- Set new coords
+    local coords = StringToCoords(v.tp_inside)
+    SetEntityCoords(playerPed, coords.x, coords.y, coords.z)
+
+    -- Fade in
+    NetworkFadeInEntity(GetPlayerPed(-1), 0)
+    Wait(1000)
+    DoScreenFadeIn(1000)
+    while IsScreenFadingIn() do Citizen.Wait(0) end
 end
 
 -- Show markers
