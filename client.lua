@@ -1,7 +1,7 @@
 local Keys = {["E"] = 38}
 
 ESX = nil
-Apartments = {}
+Properties = {}
 
 Types = {Condominiums = 0, Houses = 1, Motels = 2}
 
@@ -11,14 +11,14 @@ Citizen.CreateThread(function()
         Citizen.Wait(0)
     end
 
-    ESX.TriggerServerCallback('esx_apartments:getApartments', function(result)
-        Apartments = result
+    ESX.TriggerServerCallback('esx_apartments:getProperties', function(result)
+        Properties = result
         createBlips()
     end)
 end)
 
 function createBlips()
-    for k, v in pairs(Apartments) do
+    for k, v in pairs(Properties) do
         local blipConfig = {}
         if v.kind == Types.Condominiums then
             blipConfig = Config.Blips.Condominiums.Available
@@ -52,7 +52,7 @@ function OpenMenu(v)
 
     ESX.UI.Menu.CloseAll()
 
-    ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'apartments', {
+    ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'properties', {
         title = 'test',
         align = Config.MenuPosition,
         elements = elements
@@ -66,7 +66,7 @@ Citizen.CreateThread(function()
         Citizen.Wait(0)
 
         local coords = GetEntityCoords(GetPlayerPed(-1))
-        for k, v in pairs(Apartments) do
+        for k, v in pairs(Properties) do
             -- Enter marker
             marker = StringToCoords(v.enter_marker)
             local distance = GetDistanceBetweenCoords(coords, marker.x,
