@@ -1,3 +1,5 @@
+local Keys = {["E"] = 38}
+
 ESX = nil
 Apartments = {}
 
@@ -41,6 +43,23 @@ function createBlips()
     end
 end
 
+function OpenMenu(v)
+    local elements = {}
+
+    table.insert(elements, {label = 'Rent', value = 'rent'})
+    table.insert(elements, {label = 'Buy', value = 'buy'})
+    table.insert(elements, {label = 'Visit', value = 'visit'})
+
+    ESX.UI.Menu.CloseAll()
+
+    ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'apartments', {
+        title = 'test',
+        align = Config.MenuPosition,
+        elements = elements
+    }, function(data, menu) menu.close() end)
+
+end
+
 -- Show markers
 Citizen.CreateThread(function()
     while true do
@@ -63,8 +82,12 @@ Citizen.CreateThread(function()
                            Config.Markers.Enter.Colour.g,
                            Config.Markers.Enter.Colour.b,
                            Config.Markers.Enter.Alpha, 0, 0, 0, 1)
-            end
 
+                -- show action text
+                if distance < 1.0 and IsControlJustReleased(0, Keys['E']) then
+                    OpenMenu(v)
+                end
+            end
         end
     end
 end)

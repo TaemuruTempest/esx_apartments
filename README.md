@@ -7,6 +7,7 @@
 ### Requirements
 
 - es_extended
+- esx_menu_default
 - mysql-async
 
 ### Planned features (WIP)

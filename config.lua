@@ -1,5 +1,6 @@
 Config = {}
 Config.DrawDistance = 10.0
+Config.MenuPosition = 'top-left'
 Config.EnableHouses = true
 Config.EnableCondominiums = true
 Config.EnableMotels = true
