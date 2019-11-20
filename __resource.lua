@@ -2,4 +2,5 @@ description "ESX Apartments"
 version "0.0.1"
 dependencies{"es_extended", "mysql-async"}
 
-client_scripts{"config.lua", "client.lua"}
+client_scripts{"config.lua", "util.lua", "client.lua"}
+server_scripts{"@mysql-async/lib/MySQL.lua", "config.lua", "server.lua"}
