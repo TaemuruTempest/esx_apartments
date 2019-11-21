@@ -4,6 +4,7 @@ ESX = nil
 Properties = {}
 
 Types = {Condominiums = 0, Houses = 1, Motels = 2}
+TeleportType = {Enter = 0, Exit = 1}
 
 Citizen.CreateThread(
     function()
@@ -101,13 +102,13 @@ function OpenMenu(v)
 
             -- Visit
             if data.current.value == 'visit' then
-                EnterProperty(v)
+                TeleportProperty(TeleportType.Enter, v)
             end
         end
     )
 end
 
-function EnterProperty(v)
+function TeleportProperty(action, v)
     local playerPed = GetPlayerPed(-1)
 
     -- Fade out
@@ -119,7 +120,7 @@ function EnterProperty(v)
     Wait(1000)
 
     -- Set new coords
-    local coords = StringToCoords(v.exit_marker)
+    local coords = StringToCoords(action == TeleportType.Enter and v.exit_marker or v.enter_marker)
     SetEntityCoords(playerPed, coords.x, coords.y, coords.z)
     SetEntityHeading(playerPed, coords.h)
 
