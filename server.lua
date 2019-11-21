@@ -29,7 +29,7 @@ ESX.RegisterServerCallback('esx_apartments:getProperties', function(source, cb)
     cb(available, users[1].apartment_id)
 end)
 
--- Rent/Sell specified property
+-- Rent/Buy specified property
 RegisterServerEvent('esx_apartments:assignProperty')
 AddEventHandler('esx_apartments:assignProperty', function(id, rented)
     local xPlayer = ESX.GetPlayerFromId(source)
@@ -62,6 +62,26 @@ AddEventHandler('esx_apartments:assignProperty', function(id, rented)
         }, function()
             xPlayer.showNotification('Thank you for shopping with us')
         end)
+end)
+
+-- Sell specified property
+RegisterServerEvent('esx_apartments:unassignProperty')
+AddEventHandler('esx_apartments:unassignProperty', function(id)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    local identifier = xPlayer.getIdentifier()
+
+    -- Check if this property is already owned/rented
+    local result = MySQL.Sync.fetchAll(
+                       'SELECT id, rented FROM apartments_owned WHERE owner = @identifier AND apartment_id = @apartment_id',
+                       {['@identifier'] = identifier, ['@apartment_id'] = id})
+    if #result > 0 then
+        -- TODO: if owned, return defined sell_back % to player
+        if result[1].rented == 0 then end
+
+        MySQL.Sync.execute(
+            'DELETE FROM apartments_owned WHERE owner = @identifier AND apartment_id = @apartment_id',
+            {['@identifier'] = identifier, ['@apartment_id'] = id})
+    end
 end)
 
 ESX.RegisterServerCallback('esx_apartments:getCurrentApartment',
