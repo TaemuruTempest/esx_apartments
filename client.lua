@@ -28,7 +28,7 @@ Citizen.CreateThread(
 )
 
 function createBlips()
-    for k, v in pairs(Properties) do
+    for _, v in pairs(Properties) do
         local blipConfig = {}
         if v.kind == Types.Condominiums then
             blipConfig = Config.Blips.Condominiums.Available
@@ -135,7 +135,7 @@ Citizen.CreateThread(
             Citizen.Wait(0)
 
             local coords = GetEntityCoords(GetPlayerPed(-1))
-            for k, v in pairs(Properties) do
+            for _, v in pairs(Properties) do
                 -- Enter marker
                 marker = StringToCoords(v.enter_marker)
                 local distance = GetDistanceBetweenCoords(coords, marker.x, marker.y, marker.z, true)
