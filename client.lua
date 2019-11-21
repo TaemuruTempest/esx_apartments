@@ -94,25 +94,53 @@ end
 function OpenMenu(v)
     local elements = {}
 
-    if v.price_rent >= 0 then
+    if v.owned then
         table.insert(
             elements,
             {
-                label = string.format('Rent ($%d)', v.price_rent),
-                value = 'rent'
+                label = 'Enter',
+                value = 'enter'
             }
         )
+
+        if v.rented then
+            table.insert(
+                elements,
+                {
+                    label = 'End contract',
+                    value = 'sell'
+                }
+            )
+        else
+            table.insert(
+                elements,
+                {
+                    label = 'Sell',
+                    value = 'sell'
+                }
+            )
+        end
+    else
+        if v.price_rent >= 0 then
+            table.insert(
+                elements,
+                {
+                    label = string.format('Rent ($%d)', v.price_rent),
+                    value = 'rent'
+                }
+            )
+        end
+        if v.price_buy >= 0 then
+            table.insert(
+                elements,
+                {
+                    label = string.format('Buy ($%d)', v.price_buy),
+                    value = 'buy'
+                }
+            )
+        end
+        table.insert(elements, {label = 'Visit', value = 'visit'})
     end
-    if v.price_buy >= 0 then
-        table.insert(
-            elements,
-            {
-                label = string.format('Buy ($%d)', v.price_buy),
-                value = 'buy'
-            }
-        )
-    end
-    table.insert(elements, {label = 'Visit', value = 'visit'})
 
     ESX.UI.Menu.CloseAll()
 
@@ -134,8 +162,8 @@ function OpenMenu(v)
             -- TODO: replace blip, reopen menu
             end
 
-            -- Visit
-            if data.current.value == 'visit' then
+            -- Enter/Visit
+            if data.current.value == 'enter' or data.current.value == 'visit' then
                 TeleportProperty(TeleportType.Enter, v)
             end
         end
