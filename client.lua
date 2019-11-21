@@ -140,6 +140,10 @@ function EnterProperty(v)
     end
 end
 
+function ShowMarker(marker, config)
+    DrawMarker(config.Type, marker.x, marker.y, marker.z, 0, 0, 0, 0, 0, 0, config.Size.x, config.Size.y, config.Size.z, config.Colour.r, config.Colour.g, config.Colour.b, config.Alpha, 0, 0, 0, 1)
+end
+
 -- Show markers
 Citizen.CreateThread(
     function()
@@ -153,29 +157,7 @@ Citizen.CreateThread(
                 local distance = GetDistanceBetweenCoords(coords, marker.x, marker.y, marker.z, true)
                 -- show marker
                 if distance < Config.DrawDistance then
-                    DrawMarker(
-                        Config.Markers.Enter.Type,
-                        marker.x,
-                        marker.y,
-                        marker.z,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        Config.Markers.Enter.Size.x,
-                        Config.Markers.Enter.Size.y,
-                        Config.Markers.Enter.Size.z,
-                        Config.Markers.Enter.Colour.r,
-                        Config.Markers.Enter.Colour.g,
-                        Config.Markers.Enter.Colour.b,
-                        Config.Markers.Enter.Alpha,
-                        0,
-                        0,
-                        0,
-                        1
-                    )
+                    ShowMarker(marker, Config.Markers.Enter)
 
                     -- show action text
                     if distance < 1.0 and IsControlJustReleased(0, Keys['E']) then
