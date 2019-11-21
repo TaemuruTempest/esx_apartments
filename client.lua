@@ -25,15 +25,48 @@ Citizen.CreateThread(
 
         ESX.TriggerServerCallback(
             'esx_apartments:getProperties',
-            function(result)
+            function(result, id)
                 Properties = result
-                createBlips()
+                CreateBlips()
+
+                -- script probably restarted, check current player spawn
+                if id ~= nil and IsInside == false then
+                    CheckPlayerSpawn()
+                end
             end
         )
     end
 )
 
-function createBlips()
+function CheckPlayerSpawn()
+    Citizen.CreateThread(
+        function()
+            while not ESX.IsPlayerLoaded() do
+                Citizen.Wait(0)
+            end
+
+            ESX.TriggerServerCallback(
+                'esx_apartments:getCurrentApartment',
+                function(id)
+                    if id ~= nil then
+                        while #Properties == 0 do
+                            Citizen.Wait(0)
+                        end
+
+                        for _, v in pairs(Properties) do
+                            if v.id == id then
+                                TeleportProperty(TeleportType.Enter, v)
+                                break
+                            end
+                        end
+                    end
+            end
+        )
+    end
+)
+end
+
+function CreateBlips()
     for _, v in pairs(Properties) do
         local blipConfig = {}
         if v.kind == Types.Condominiums then
