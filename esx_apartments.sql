@@ -7,8 +7,6 @@ CREATE TABLE `apartments_available` (
 	`kind` INT(1) DEFAULT 0,
 	`enter_marker` VARCHAR(255) DEFAULT NULL,
 	`exit_marker` VARCHAR(255) DEFAULT NULL,
-	`tp_inside` VARCHAR(255) DEFAULT NULL,
-	`tp_outside` VARCHAR(255) DEFAULT NULL,
 	`garage_get` VARCHAR(255) DEFAULT NULL,
 	`garage_put` VARCHAR(255) DEFAULT NULL,
 	`ipl` VARCHAR(100) DEFAULT NULL,
@@ -29,5 +27,5 @@ CREATE TABLE `apartments_owned` (
 );
 
 INSERT INTO `apartments_available` VALUES
-	(1, 'LowEndApartment', 'Basic Apartment', 0, '254.79,-1013.30,29.27', '266.09,-1006.75,-100.74', '265.94,-1007.33,-101.00,354.79', '254.79,-1013.30,29.27', NULL, NULL, NULL, NULL, 500, 400000, 50)
+	(1, 'LowEndApartment', 'Basic Apartment', 0, '254.79,-1013.30,29.27', '266.09,-1006.75,-100.74,354.79', NULL, NULL, NULL, NULL, 500, 400000, 50)
 ;

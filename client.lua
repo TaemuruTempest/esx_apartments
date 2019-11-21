@@ -115,7 +115,7 @@ function EnterProperty(v)
     Wait(1000)
 
     -- Set new coords
-    local coords = StringToCoords(v.tp_inside)
+    local coords = StringToCoords(v.exit_marker)
     SetEntityCoords(playerPed, coords.x, coords.y, coords.z)
     SetEntityHeading(playerPed, coords.h)
 
