@@ -26,6 +26,10 @@ CREATE TABLE `apartments_owned` (
   PRIMARY KEY (`id`)
 );
 
+ALTER TABLE `users`
+  ADD COLUMN `apartment_id` INT(11) NULL
+;
+
 INSERT INTO `apartments_available` VALUES
 	(1, 'LowEndApartment', 'Basic Apartment', 0, '254.79,-1013.30,29.27', '266.09,-1006.75,-100.74,354.79', NULL, NULL, NULL, NULL, 500, 400000, 50)
 ;

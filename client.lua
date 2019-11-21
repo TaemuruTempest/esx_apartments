@@ -123,6 +123,14 @@ function EnterProperty(v)
     SetEntityCoords(playerPed, coords.x, coords.y, coords.z)
     SetEntityHeading(playerPed, coords.h)
 
+    if action == TeleportType.Enter then
+        TriggerServerEvent('esx_apartments:setCurrentApartment', v.id)
+        IsInside = true
+    else
+        TriggerServerEvent('esx_apartments:unsetCurrentApartment')
+        IsInside = false
+    end
+
     -- Fade in
     NetworkFadeInEntity(playerPed, 0)
     Wait(1000)

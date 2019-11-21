@@ -11,8 +11,17 @@ TriggerEvent(
 ESX.RegisterServerCallback(
     'esx_apartments:getProperties',
     function(source, cb)
+        local xPlayer = ESX.GetPlayerFromId(source)
+
         local available = MySQL.Sync.fetchAll('SELECT * FROM apartments_available')
-        cb(available)
+        local users =
+            MySQL.Sync.fetchAll(
+            'SELECT apartment_id FROM users WHERE identifier = @identifier',
+            {
+                ['@identifier'] = xPlayer.getIdentifier()
+            }
+        )
+        cb(available, users[1].apartment_id)
     end
 )
 
@@ -50,6 +59,52 @@ AddEventHandler(
             function()
                 xPlayer.showNotification('Thank you for shopping with us')
             end
+        )
+    end
+)
+
+ESX.RegisterServerCallback(
+    'esx_apartments:getCurrentApartment',
+    function(source, cb)
+        local xPlayer = ESX.GetPlayerFromId(source)
+
+        MySQL.Async.fetchAll(
+            'SELECT apartment_id FROM users WHERE identifier = @identifier',
+            {
+                ['@identifier'] = xPlayer.getIdentifier()
+            },
+            function(result)
+                cb(result[1].apartment_id)
+            end
+        )
+    end
+)
+
+RegisterServerEvent('esx_apartments:setCurrentApartment')
+AddEventHandler(
+    'esx_apartments:setCurrentApartment',
+    function(id)
+        local xPlayer = ESX.GetPlayerFromId(source)
+        MySQL.Sync.execute(
+            'UPDATE users SET apartment_id = @apartment_id WHERE identifier = @identifier',
+            {
+                ['@apartment_id'] = id,
+                ['@identifier'] = xPlayer.getIdentifier()
+            }
+        )
+    end
+)
+
+RegisterServerEvent('esx_apartments:unsetCurrentApartment')
+AddEventHandler(
+    'esx_apartments:unsetCurrentApartment',
+    function()
+        local xPlayer = ESX.GetPlayerFromId(source)
+        MySQL.Sync.execute(
+            'UPDATE users SET apartment_id = NULL WHERE identifier = @identifier',
+            {
+                ['@identifier'] = xPlayer.getIdentifier()
+            }
         )
     end
 )
