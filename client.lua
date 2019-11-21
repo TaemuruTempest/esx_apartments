@@ -46,14 +46,24 @@ end
 function OpenMenu(v)
     local elements = {}
 
-    table.insert(elements, {label = 'Rent', value = 'rent'})
-    table.insert(elements, {label = 'Buy', value = 'buy'})
+    if v.price_rent >= 0 then
+        table.insert(elements, {
+            label = string.format('Rent ($%d)', v.price_rent),
+            value = 'rent'
+        })
+    end
+    if v.price_buy >= 0 then
+        table.insert(elements, {
+            label = string.format('Buy ($%d)', v.price_buy),
+            value = 'buy'
+        })
+    end
     table.insert(elements, {label = 'Visit', value = 'visit'})
 
     ESX.UI.Menu.CloseAll()
 
     ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'properties', {
-        title = 'test',
+        title = v.label,
         align = Config.MenuPosition,
         elements = elements
     }, function(data, menu)
