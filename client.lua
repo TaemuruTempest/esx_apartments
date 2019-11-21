@@ -17,6 +17,10 @@ Citizen.CreateThread(
             Citizen.Wait(0)
         end
 
+        while not ESX.IsPlayerLoaded() do
+            Citizen.Wait(1)
+        end
+
         ESX.TriggerServerCallback(
             'esx_apartments:getProperties',
             function(result)
