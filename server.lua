@@ -21,6 +21,26 @@ ESX.RegisterServerCallback(
                 ['@identifier'] = xPlayer.getIdentifier()
             }
         )
+
+        -- assign owned properties to available
+        local owned =
+            MySQL.Sync.fetchAll(
+            'SELECT apartment_id, rented FROM apartments_owned WHERE owner = @owner',
+            {
+                ['@owner'] = xPlayer.getIdentifier()
+            }
+        )
+        for k, property in pairs(available) do
+            available[k].owned = false
+            available[k].rented = false
+
+            for _, v in pairs(owned) do
+                if v.apartment_id == property.id then
+                    available[k].owned = true
+                    available[k].rented = v.rented
+                end
+            end
+        end
         cb(available, users[1].apartment_id)
     end
 )
