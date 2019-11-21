@@ -5,6 +5,7 @@ Properties = {}
 
 Types = {Condominiums = 0, Houses = 1, Motels = 2}
 TeleportType = {Enter = 0, Exit = 1}
+IsInside = false
 
 Citizen.CreateThread(
     function()
@@ -152,10 +153,12 @@ Citizen.CreateThread(
             Citizen.Wait(0)
 
             local coords = GetEntityCoords(GetPlayerPed(-1))
+            local distance
+
             for _, v in pairs(Properties) do
                 -- Enter marker
                 marker = StringToCoords(v.enter_marker)
-                local distance = GetDistanceBetweenCoords(coords, marker.x, marker.y, marker.z, true)
+                distance = GetDistanceBetweenCoords(coords, marker.x, marker.y, marker.z, true)
                 -- show marker
                 if distance < Config.DrawDistance then
                     ShowMarker(marker, Config.Markers.Enter)
@@ -163,6 +166,20 @@ Citizen.CreateThread(
                     -- show action text
                     if distance < 1.0 and IsControlJustReleased(0, Keys['E']) then
                         OpenMenu(v)
+                    end
+                end
+
+                -- Exit marker
+                if IsInside then
+                    marker = StringToCoords(v.exit_marker)
+                    distance = GetDistanceBetweenCoords(coords, marker.x, marker.y, marker.z, true)
+                    -- show marker
+                    if distance < Config.DrawDistance then
+                        ShowMarker(marker, Config.Markers.Exit)
+
+                        if distance < 1.0 and IsControlJustReleased(0, Keys['E']) then
+                            TeleportProperty(TeleportType.Exit, v)
+                        end
                     end
                 end
             end
