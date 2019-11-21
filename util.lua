@@ -8,5 +8,10 @@ end
 
 function StringToCoords(s)
     local a = split(s, ",")
-    return {x = tonumber(a[1]), y = tonumber(a[2]), z = tonumber(a[3])}
+    return {
+        x = tonumber(a[1]),
+        y = tonumber(a[2]),
+        z = tonumber(a[3]),
+        h = tonumber(a[4]) or 0
+    }
 end

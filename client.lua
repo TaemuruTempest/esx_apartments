@@ -77,6 +77,7 @@ function EnterProperty(v)
     -- Set new coords
     local coords = StringToCoords(v.tp_inside)
     SetEntityCoords(playerPed, coords.x, coords.y, coords.z)
+    SetEntityHeading(playerPed, coords.h)
 
     -- Fade in
     NetworkFadeInEntity(playerPed, 0)
