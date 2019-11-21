@@ -1,21 +1,31 @@
-local Keys = {["E"] = 38}
+local Keys = {['E'] = 38}
 
 ESX = nil
 Properties = {}
 
 Types = {Condominiums = 0, Houses = 1, Motels = 2}
 
-Citizen.CreateThread(function()
-    while ESX == nil do
-        TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-        Citizen.Wait(0)
-    end
+Citizen.CreateThread(
+    function()
+        while ESX == nil do
+            TriggerEvent(
+                'esx:getSharedObject',
+                function(obj)
+                    ESX = obj
+                end
+            )
+            Citizen.Wait(0)
+        end
 
-    ESX.TriggerServerCallback('esx_apartments:getProperties', function(result)
-        Properties = result
-        createBlips()
-    end)
-end)
+        ESX.TriggerServerCallback(
+            'esx_apartments:getProperties',
+            function(result)
+                Properties = result
+                createBlips()
+            end
+        )
+    end
+)
 
 function createBlips()
     for k, v in pairs(Properties) do
@@ -39,7 +49,6 @@ function createBlips()
             AddTextComponentString(v.label)
             EndTextCommandSetBlipName(blip)
         end
-
     end
 end
 
@@ -47,39 +56,51 @@ function OpenMenu(v)
     local elements = {}
 
     if v.price_rent >= 0 then
-        table.insert(elements, {
-            label = string.format('Rent ($%d)', v.price_rent),
-            value = 'rent'
-        })
+        table.insert(
+            elements,
+            {
+                label = string.format('Rent ($%d)', v.price_rent),
+                value = 'rent'
+            }
+        )
     end
     if v.price_buy >= 0 then
-        table.insert(elements, {
-            label = string.format('Buy ($%d)', v.price_buy),
-            value = 'buy'
-        })
+        table.insert(
+            elements,
+            {
+                label = string.format('Buy ($%d)', v.price_buy),
+                value = 'buy'
+            }
+        )
     end
     table.insert(elements, {label = 'Visit', value = 'visit'})
 
     ESX.UI.Menu.CloseAll()
 
-    ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'properties', {
-        title = v.label,
-        align = Config.MenuPosition,
-        elements = elements
-    }, function(data, menu)
-        menu.close()
+    ESX.UI.Menu.Open(
+        'default',
+        GetCurrentResourceName(),
+        'properties',
+        {
+            title = v.label,
+            align = Config.MenuPosition,
+            elements = elements
+        },
+        function(data, menu)
+            menu.close()
 
-        -- Rent
-        if data.current.value == 'rent' then
-            TriggerServerEvent('esx_apartments:assignProperty', v.id, true)
+            -- Rent
+            if data.current.value == 'rent' then
+                TriggerServerEvent('esx_apartments:assignProperty', v.id, true)
             -- TODO: replace blip, reopen menu
+            end
+
+            -- Visit
+            if data.current.value == 'visit' then
+                EnterProperty(v)
+            end
         end
-
-        -- Visit
-        if data.current.value == 'visit' then EnterProperty(v) end
-
-    end)
-
+    )
 end
 
 function EnterProperty(v)
@@ -87,7 +108,9 @@ function EnterProperty(v)
 
     -- Fade out
     DoScreenFadeOut(1000)
-    while IsScreenFadingOut() do Citizen.Wait(0) end
+    while IsScreenFadingOut() do
+        Citizen.Wait(0)
+    end
     NetworkFadeOutEntity(playerPed, true, false)
     Wait(1000)
 
@@ -100,37 +123,54 @@ function EnterProperty(v)
     NetworkFadeInEntity(playerPed, 0)
     Wait(1000)
     DoScreenFadeIn(1000)
-    while IsScreenFadingIn() do Citizen.Wait(0) end
+    while IsScreenFadingIn() do
+        Citizen.Wait(0)
+    end
 end
 
 -- Show markers
-Citizen.CreateThread(function()
-    while true do
-        Citizen.Wait(0)
+Citizen.CreateThread(
+    function()
+        while true do
+            Citizen.Wait(0)
 
-        local coords = GetEntityCoords(GetPlayerPed(-1))
-        for k, v in pairs(Properties) do
-            -- Enter marker
-            marker = StringToCoords(v.enter_marker)
-            local distance = GetDistanceBetweenCoords(coords, marker.x,
-                                                      marker.y, marker.z, true)
-            -- show marker
-            if distance < Config.DrawDistance then
-                DrawMarker(Config.Markers.Enter.Type, marker.x, marker.y,
-                           marker.z, 0, 0, 0, 0, 0, 0,
-                           Config.Markers.Enter.Size.x,
-                           Config.Markers.Enter.Size.y,
-                           Config.Markers.Enter.Size.z,
-                           Config.Markers.Enter.Colour.r,
-                           Config.Markers.Enter.Colour.g,
-                           Config.Markers.Enter.Colour.b,
-                           Config.Markers.Enter.Alpha, 0, 0, 0, 1)
+            local coords = GetEntityCoords(GetPlayerPed(-1))
+            for k, v in pairs(Properties) do
+                -- Enter marker
+                marker = StringToCoords(v.enter_marker)
+                local distance = GetDistanceBetweenCoords(coords, marker.x, marker.y, marker.z, true)
+                -- show marker
+                if distance < Config.DrawDistance then
+                    DrawMarker(
+                        Config.Markers.Enter.Type,
+                        marker.x,
+                        marker.y,
+                        marker.z,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        Config.Markers.Enter.Size.x,
+                        Config.Markers.Enter.Size.y,
+                        Config.Markers.Enter.Size.z,
+                        Config.Markers.Enter.Colour.r,
+                        Config.Markers.Enter.Colour.g,
+                        Config.Markers.Enter.Colour.b,
+                        Config.Markers.Enter.Alpha,
+                        0,
+                        0,
+                        0,
+                        1
+                    )
 
-                -- show action text
-                if distance < 1.0 and IsControlJustReleased(0, Keys['E']) then
-                    OpenMenu(v)
+                    -- show action text
+                    if distance < 1.0 and IsControlJustReleased(0, Keys['E']) then
+                        OpenMenu(v)
+                    end
                 end
             end
         end
     end
-end)
+)
