@@ -60,10 +60,10 @@ function CheckPlayerSpawn()
                             end
                         end
                     end
-            end
-        )
-    end
-)
+                end
+            )
+        end
+    )
 end
 
 function CreateBlips()
