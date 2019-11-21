@@ -69,6 +69,13 @@ function OpenMenu(v)
     }, function(data, menu)
         menu.close()
 
+        -- Rent
+        if data.current.value == 'rent' then
+            TriggerServerEvent('esx_apartments:assignProperty', v.id, true)
+            -- TODO: replace blip, reopen menu
+        end
+
+        -- Visit
         if data.current.value == 'visit' then EnterProperty(v) end
 
     end)

@@ -15,9 +15,19 @@ CREATE TABLE `apartments_available` (
 	`room_menu` VARCHAR(255) DEFAULT NULL,
 	`price_rent` INT(11) DEFAULT 0,
 	`price_buy` INT(11) DEFAULT 0,
+	`sell_back` INT(11) DEFAULT 50,
 	PRIMARY KEY (`id`)
 );
 
+CREATE TABLE `apartments_owned` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `apartment_id` INT(11) NOT NULL,
+  `owner` VARCHAR(50) NOT NULL,
+  `price` INT(11) NOT NULL,
+  `rented` TINYINT(1) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
 INSERT INTO `apartments_available` VALUES
-	(1, 'LowEndApartment', 'Basic Apartment', 0, '254.79,-1013.30,29.27', '266.09,-1006.75,-100.74', '265.94,-1007.33,-101.00,354.79', '254.79,-1013.30,29.27', NULL, NULL, NULL, NULL, 500, 400000)
+	(1, 'LowEndApartment', 'Basic Apartment', 0, '254.79,-1013.30,29.27', '266.09,-1006.75,-100.74', '265.94,-1007.33,-101.00,354.79', '254.79,-1013.30,29.27', NULL, NULL, NULL, NULL, 500, 400000, 50)
 ;
