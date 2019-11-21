@@ -70,17 +70,24 @@ function CreateBlips()
     end
 end
 
+function SetOwned(id, value, rented)
+    for k, v in pairs(Properties) do
+        if v.apartment_id == id then
+            Properties[k].owned = value
+            Properties[k].rented = rented
+        end
+    end
+end
+
 function OpenMenu(v)
     local elements = {}
 
     if v.owned then
         table.insert(elements, {label = 'Enter', value = 'enter'})
-
-        if v.rented then
-            table.insert(elements, {label = 'End contract', value = 'sell'})
-        else
-            table.insert(elements, {label = 'Sell', value = 'sell'})
-        end
+        table.insert(elements, {
+            label = v.rented and 'End contract' or 'Sell',
+            value = 'sell'
+        })
     else
         if v.price_rent >= 0 then
             table.insert(elements, {
@@ -109,7 +116,20 @@ function OpenMenu(v)
         -- Rent
         if data.current.value == 'rent' then
             TriggerServerEvent('esx_apartments:assignProperty', v.id, true)
+            v.owned = true
+            v.rented = true
+            SetOwned(v.id, true, true)
+            OpenMenu(v)
             -- TODO: replace blip, reopen menu
+        end
+
+        -- Sell
+        if data.current.value == 'sell' then
+            TriggerServerEvent('esx_apartments:unassignProperty', v.id)
+            v.owned = false
+            v.rented = false
+            SetOwned(v.id, false, false)
+            OpenMenu(v)
         end
 
         -- Enter/Visit
