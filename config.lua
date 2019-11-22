@@ -28,13 +28,13 @@ Config.Markers = {
     Enter = {
         Type = 27,
         Size = {x = 1.0, y = 1.0, z = 1.0},
-        Colour = {r = 50, g = 50, b = 50},
+        Colour = {r = 0, g = 255, b = 0},
         Alpha = 150
     },
     Exit = {
         Type = 27,
         Size = {x = 1.0, y = 1.0, z = 1.0},
-        Colour = {r = 50, g = 50, b = 50},
+        Colour = {r = 255, g = 0, b = 0},
         Alpha = 150
     },
     GarageGet = {
