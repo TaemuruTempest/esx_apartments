@@ -36,4 +36,7 @@ INSERT INTO `apartments_available` VALUES
 	(NULL, 'IntegrityWay', '4 Integrity Way', 0, '-47.64,-586.54,37.95,73.26', NULL, NULL, NULL, NULL, NULL, 0, 0, 0),
 	(NULL, 'IntegrityWay', 'Apt. 28', 0, NULL, '-31.25,-595.24,80.03,242.75', NULL, NULL, NULL, NULL, 1500, 800000, 50),
 	(NULL, 'IntegrityWay', 'Apt. 30', 0, NULL, '-18.51,-591.30,90.11,340.48', NULL, NULL, NULL, NULL, 1500, 800000, 50),
+	(NULL, 'DellPerroHeights', 'Dell Perro Heights', 0, '-1447.85,-538.28,34.74,206.68', NULL, NULL, NULL, NULL, NULL, 0, 0, 0),
+	(NULL, 'DellPerroHeights', 'Apt. 4', 0, NULL, '-1452.79,-539.82,74.04,30.58', NULL, NULL, NULL, NULL, 1500, 800000, 50),
+	(NULL, 'DellPerroHeights', 'Apt. 7', 0, NULL, '-1450.07,-525.63,56.93,32.97', NULL, NULL, NULL, NULL, 1500, 800000, 50),
 ;
