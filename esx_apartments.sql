@@ -33,7 +33,7 @@ ALTER TABLE `users`
 -- Generic Apartments
 INSERT INTO `apartments_available` VALUES
 	(NULL, 'LowEndApartment', 'Basic Apartment', 0, '254.79,-1013.30,29.27', '266.09,-1006.75,-100.74,354.79', NULL, NULL, NULL, NULL, 500, 400000, 50),
-	(NULL, 'IntegrityWay', '4 Integrity Way', 0, '-47.64,-586.54,37.95,73.26', NULL, NULL, NULL, NULL, NULL, 0, 0, 0),
+	(NULL, 'IntegrityWay', '4 Integrity Way', 0, '-47.64,-586.54,37.95,73.26', NULL, '-7.18,-574.56,37.75,332.53', '-16.36,-570.41,37.75,351.60', NULL, NULL, 0, 0, 0),
 	(NULL, 'IntegrityWay', 'Apt. 28', 0, NULL, '-31.25,-595.24,80.03,242.75', NULL, NULL, NULL, NULL, 1500, 800000, 50),
 	(NULL, 'IntegrityWay', 'Apt. 30', 0, NULL, '-18.51,-591.30,90.11,340.48', NULL, NULL, NULL, NULL, 1500, 800000, 50),
 	(NULL, 'DellPerroHeights', 'Dell Perro Heights', 0, '-1447.85,-538.28,34.74,206.68', NULL, NULL, NULL, NULL, NULL, 0, 0, 0),

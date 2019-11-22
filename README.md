@@ -10,11 +10,21 @@
 - esx_menu_default
 - mysql-async
 
-### Planned features (WIP)
+#### Optional for garage
+
+- esx_eden_garage
+- esx_vehicleshop
+- LegacyFuel
+
+### Features
 
 - Define apartments blips/markers via database
-- Buy/Rent apartments / flats at specified block buildings
 - Rent motel rooms
+- Enable garage when the property is owned / rented
+
+### Planned features (WIP)
+
+- Buy/Rent apartments / flats at specified block buildings
 - Sell back at defined % rates
 - Key management: option to give them to other players
 - doorbell: call player's phone

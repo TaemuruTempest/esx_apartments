@@ -3,6 +3,7 @@ local Keys = {['E'] = 38}
 ESX = nil
 Properties = {}
 Blips = {}
+GarageBlips = {}
 
 Types = {Condominium = 0, House = 1, Motel = 2}
 TeleportType = {Enter = 0, Exit = 1}
@@ -47,11 +48,19 @@ function CheckPlayerSpawn()
 end
 
 function CreateBlips()
+    local marker
     for _, v in pairs(Properties) do
         if v.enter_marker ~= nil and
             ((v.kind == Types.Condominium and Config.EnableCondominiums) or
                 (v.kind == Types.House and Config.EnableHouses) or
                 (v.kind == Types.Motel and Config.EnableMotels)) then
+
+            if v.garage_get ~= nil and Config.EnableGarages then
+                marker = StringToCoords(v.garage_get)
+                GarageBlips[v.id] =
+                    AddBlipForCoord(marker.x, marker.y, marker.z)
+            end
+
             marker = StringToCoords(v.enter_marker)
             Blips[v.id] = AddBlipForCoord(marker.x, marker.y, marker.z)
             SetBlip(v)
@@ -112,6 +121,22 @@ function SetBlip(v)
     BeginTextCommandSetBlipName('STRING')
     AddTextComponentString(blipText)
     EndTextCommandSetBlipName(Blips[v.id])
+
+    -- Check garage blip
+    if GarageBlips[v.id] ~= nil then
+        SetBlipSprite(GarageBlips[v.id], Config.Blips.Garages.Sprite)
+        SetBlipScale(GarageBlips[v.id], Config.Blips.Garages.Scale)
+        SetBlipColour(GarageBlips[v.id], Config.Blips.Garages.Colour)
+        SetBlipAsShortRange(GarageBlips[v.id], true)
+        if v.owned then
+            SetBlipDisplay(GarageBlips[v.id], Config.Blips.Garages.Display)
+        else
+            SetBlipDisplay(GarageBlips[v.id], 0)
+        end
+        BeginTextCommandSetBlipName('STRING')
+        AddTextComponentString('Garage')
+        EndTextCommandSetBlipName(GarageBlips[v.id])
+    end
 end
 
 function SetOwned(id, value, rented)
@@ -146,6 +171,7 @@ function OpenCondominiumMenu(v)
         end
     end
 
+    ESX.UI.Menu.CloseAll()
     ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'condominium', {
         title = v.label,
         align = Config.MenuPosition,
@@ -185,7 +211,6 @@ function OpenPropertyMenu(v)
     end
 
     ESX.UI.Menu.CloseAll()
-
     ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'properties', {
         title = v.label,
         align = Config.MenuPosition,
@@ -222,6 +247,59 @@ function OpenPropertyMenu(v)
         if data.current.value == 'enter' or data.current.value == 'visit' then
             TeleportProperty(TeleportType.Enter, v)
         end
+    end)
+end
+
+function OpenGarageMenu(p)
+    local elements = {}
+
+    ESX.TriggerServerCallback('eden_garage:getVehicles', function(vehicles)
+        for _, v in pairs(vehicles) do
+            local vehicleName = GetDisplayNameFromVehicleModel(v.vehicle.model)
+
+            if v.state then
+                table.insert(elements, {
+                    label = vehicleName .. " (" .. v.vehicle.plate .. ")",
+                    value = v.vehicle
+                })
+            end
+        end
+
+        if #elements == 0 then
+            table.insert(elements, {label = 'No vehicles found', value = nil})
+        end
+
+        ESX.UI.Menu.CloseAll()
+        ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'garage', {
+            title = 'Garage',
+            align = 'top-left',
+            elements = elements
+        }, function(data, menu)
+            menu.close()
+            if data.current.value == nil then return end
+
+            local vehicle = data.current.value
+            local marker = StringToCoords(p.garage_get)
+
+            ESX.Game.SpawnVehicle(vehicle.model,
+                                  {x = marker.x, y = marker.y, z = marker.z},
+                                  marker.h, function(model)
+
+                ESX.Game.SetVehicleProperties(model, vehicle)
+                SetVehicleBodyHealth(model, vehicle.bodyHealth * 1.0)
+                if vehicle.engineHealth == 0 then
+                    vehicle.engineHealth = 100
+                end
+                SetVehicleEngineHealth(model, vehicle.engineHealth * 1.0)
+                if exports["LegacyFuel"] ~= nil then
+                    exports["LegacyFuel"]:SetFuel(model, vehicle.fuelLevel * 1.0)
+                end
+                SetVehicleFuelLevel(model, vehicle.fuelLevel * 1.0)
+                SetVehRadioStation(model, "OFF")
+                TaskWarpPedIntoVehicle(GetPlayerPed(-1), model, -1)
+            end)
+            TriggerServerEvent('eden_garage:modifystate', vehicle.plate, false)
+        end)
     end)
 end
 
@@ -282,8 +360,8 @@ Citizen.CreateThread(function()
         local distance
 
         for _, v in pairs(Properties) do
+            -- Enter marker
             if v.enter_marker ~= nil then
-                -- Enter marker
                 marker = StringToCoords(v.enter_marker)
                 distance = GetDistanceBetweenCoords(coords, marker.x, marker.y,
                                                     marker.z, true)
@@ -319,6 +397,73 @@ Citizen.CreateThread(function()
                                 'esx_apartments:unassignProperty', v.id)
                         end
                         TeleportProperty(TeleportType.Exit, v)
+                    end
+                end
+            end
+
+            -- Garage markers
+            if Config.EnableGarages then
+                local playerPed = GetPlayerPed(-1)
+
+                if v.owned and v.garage_get ~= nil then
+                    marker = StringToCoords(v.garage_get)
+                    distance = GetDistanceBetweenCoords(coords, marker.x,
+                                                        marker.y, marker.z, true)
+                    -- show marker
+                    if distance < Config.DrawDistanceGarage then
+                        ShowMarker(marker, Config.Markers.GarageGet)
+
+                        if distance < 2.0 and
+                            IsPedInAnyVehicle(playerPed, false) == false then
+                            SetTextComponentFormat("STRING")
+                            AddTextComponentString(
+                                "Press ~INPUT_CONTEXT~ to enter garage")
+                            DisplayHelpTextFromStringLabel(0, 0, 1, -1)
+
+                            if IsControlJustReleased(0, Keys['E']) then
+                                OpenGarageMenu(v)
+                            end
+                        end
+                    end
+                end
+
+                if v.owned and v.garage_put ~= nil then
+                    marker = StringToCoords(v.garage_put)
+                    distance = GetDistanceBetweenCoords(coords, marker.x,
+                                                        marker.y, marker.z, true)
+                    -- show marker
+                    if distance < Config.DrawDistanceGarage then
+                        ShowMarker(marker, Config.Markers.GaragePut)
+
+                        if distance < 2.0 and
+                            IsPedInAnyVehicle(playerPed, false) then
+                            SetTextComponentFormat("STRING")
+                            AddTextComponentString(
+                                "Press ~INPUT_CONTEXT~ to deposit vehicle")
+                            DisplayHelpTextFromStringLabel(0, 0, 1, -1)
+
+                            if IsControlJustReleased(0, Keys['E']) then
+                                local vehicle =
+                                    GetVehiclePedIsIn(playerPed, false)
+                                local vehicleProps =
+                                    ESX.Game.GetVehicleProperties(vehicle)
+                                vehicleProps.engineHealth =
+                                    GetVehicleEngineHealth(vehicle)
+                                vehicleProps.bodyHealth =
+                                    GetVehicleBodyHealth(vehicle)
+
+                                print("")
+                                ESX.TriggerServerCallback('eden_garage:stockv',
+                                                          function(result)
+                                    if result then
+                                        ESX.Game.DeleteVehicle(vehicle)
+                                        TriggerServerEvent(
+                                            'eden_garage:modifystate',
+                                            vehicleProps.plate, true)
+                                    end
+                                end, vehicleProps)
+                            end
+                        end
                     end
                 end
             end
