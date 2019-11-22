@@ -4,9 +4,9 @@ ESX = nil
 Properties = {}
 Blips = {}
 
-Types = {Condominiums = 0, Houses = 1, Motels = 2}
+Types = {Condominium = 0, House = 1, Motel = 2}
 TeleportType = {Enter = 0, Exit = 1}
-IsInside = false
+IsInside = 0
 
 Citizen.CreateThread(function()
     while ESX == nil do
@@ -22,7 +22,7 @@ Citizen.CreateThread(function()
         CreateBlips()
 
         -- script probably restarted, check current player spawn
-        if id ~= nil and IsInside == false then CheckPlayerSpawn() end
+        if id ~= nil and IsInside == 0 then CheckPlayerSpawn() end
     end)
 end)
 
@@ -48,15 +48,19 @@ end
 
 function CreateBlips()
     for _, v in pairs(Properties) do
-        marker = StringToCoords(v.enter_marker)
-        Blips[v.id] = AddBlipForCoord(marker.x, marker.y, marker.z)
-        SetBlip(v)
+        if v.enter_marker ~= nil then
+            marker = StringToCoords(v.enter_marker)
+            Blips[v.id] = AddBlipForCoord(marker.x, marker.y, marker.z)
+            SetBlip(v)
+        end
     end
 end
 
 function SetBlip(v)
     local blipConfig = {}
-    if v.kind == Types.Condominiums then
+    local blipText = ""
+    if v.kind == Types.Condominium then
+        blipText = "Apartment"
         if v.owned then
             blipConfig = Config.Blips.Condominiums.Owned
         else
@@ -64,7 +68,7 @@ function SetBlip(v)
         end
     end
 
-    if v.kind == Types.Condominiums and Config.EnableCondominiums then
+    if v.kind == Types.Condominium and Config.EnableCondominiums then
         SetBlipSprite(Blips[v.id], blipConfig.Sprite)
         SetBlipDisplay(Blips[v.id], blipConfig.Display)
         SetBlipScale(Blips[v.id], blipConfig.Scale)
@@ -72,7 +76,7 @@ function SetBlip(v)
         SetBlipAsShortRange(Blips[v.id], true)
 
         BeginTextCommandSetBlipName('STRING')
-        AddTextComponentString(v.label)
+        AddTextComponentString(blipText)
         EndTextCommandSetBlipName(Blips[v.id])
     end
 end
@@ -86,7 +90,31 @@ function SetOwned(id, value, rented)
     end
 end
 
-function OpenMenu(v)
+function GetPropertyById(id)
+    for _, v in pairs(Properties) do if v.id == id then return v end end
+end
+
+function OpenCondominiumMenu(v)
+    local elements = {}
+
+    -- get available properties on this condominium
+    for _, child in pairs(Properties) do
+        if child.parent == v.id then
+            table.insert(elements, {label = child.label, value = child})
+        end
+    end
+
+    ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'condominium', {
+        title = v.label,
+        align = Config.MenuPosition,
+        elements = elements
+    }, function(data, menu)
+        menu.close()
+        OpenPropertyMenu(data.current.value)
+    end)
+end
+
+function OpenPropertyMenu(v)
     local elements = {}
 
     if v.owned then
@@ -127,7 +155,7 @@ function OpenMenu(v)
             v.rented = true
             SetOwned(v.id, true, true)
             SetBlip(v)
-            OpenMenu(v)
+            OpenPropertyMenu(v)
         end
 
         -- Sell
@@ -137,7 +165,7 @@ function OpenMenu(v)
             v.rented = false
             SetOwned(v.id, false, false)
             SetBlip(v)
-            OpenMenu(v)
+            OpenPropertyMenu(v)
         end
 
         -- Enter/Visit
@@ -150,6 +178,19 @@ end
 function TeleportProperty(action, v)
     local playerPed = GetPlayerPed(-1)
 
+    -- check where to teleport player
+    local teleportCoords
+    if action == TeleportType.Enter then
+        teleportCoords = v.exit_marker
+    else
+        if v.parent ~= 0 then
+            local parent = GetPropertyById(v.parent)
+            teleportCoords = parent.enter_marker
+        else
+            teleportCoords = v.enter_marker
+        end
+    end
+
     -- Fade out
     DoScreenFadeOut(1000)
     while IsScreenFadingOut() do Citizen.Wait(0) end
@@ -157,18 +198,16 @@ function TeleportProperty(action, v)
     Wait(1000)
 
     -- Set new coords
-    local coords = StringToCoords(
-                       action == TeleportType.Enter and v.exit_marker or
-                           v.enter_marker)
+    local coords = StringToCoords(teleportCoords)
     SetEntityCoords(playerPed, coords.x, coords.y, coords.z)
     SetEntityHeading(playerPed, coords.h)
 
     if action == TeleportType.Enter then
         TriggerServerEvent('esx_apartments:setCurrentApartment', v.id)
-        IsInside = true
+        IsInside = v.id
     else
         TriggerServerEvent('esx_apartments:unsetCurrentApartment')
-        IsInside = false
+        IsInside = 0
     end
 
     -- Fade in
@@ -193,22 +232,30 @@ Citizen.CreateThread(function()
         local distance
 
         for _, v in pairs(Properties) do
-            -- Enter marker
-            marker = StringToCoords(v.enter_marker)
-            distance = GetDistanceBetweenCoords(coords, marker.x, marker.y,
-                                                marker.z, true)
-            -- show marker
-            if distance < Config.DrawDistance then
-                ShowMarker(marker, Config.Markers.Enter)
+            if v.enter_marker ~= nil then
+                -- Enter marker
+                marker = StringToCoords(v.enter_marker)
+                distance = GetDistanceBetweenCoords(coords, marker.x, marker.y,
+                                                    marker.z, true)
+                -- show marker
+                if distance < Config.DrawDistance then
+                    ShowMarker(marker, Config.Markers.Enter)
 
-                -- show action text
-                if distance < 1.0 and IsControlJustReleased(0, Keys['E']) then
-                    OpenMenu(v)
+                    -- show action text
+                    if distance < 1.0 and IsControlJustReleased(0, Keys['E']) then
+                        -- Condominium: show child properties
+                        if v.kind == Types.Condominium and v.parent == 0 and
+                            v.exit_marker == nil then
+                            OpenCondominiumMenu(v)
+                        else
+                            OpenPropertyMenu(v)
+                        end
+                    end
                 end
             end
 
             -- Exit marker
-            if IsInside then
+            if IsInside == v.id and v.exit_marker ~= nil then
                 marker = StringToCoords(v.exit_marker)
                 distance = GetDistanceBetweenCoords(coords, marker.x, marker.y,
                                                     marker.z, true)

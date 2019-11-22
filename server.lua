@@ -6,24 +6,38 @@ TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 ESX.RegisterServerCallback('esx_apartments:getProperties', function(source, cb)
     local xPlayer = ESX.GetPlayerFromId(source)
 
-    local available = MySQL.Sync.fetchAll('SELECT * FROM apartments_available')
+    local available = MySQL.Sync.fetchAll(
+                          'SELECT * FROM apartments_available ORDER BY name')
     local users = MySQL.Sync.fetchAll(
                       'SELECT apartment_id FROM users WHERE identifier = @identifier',
                       {['@identifier'] = xPlayer.getIdentifier()})
 
-    -- assign owned properties to available
     local owned = MySQL.Sync.fetchAll(
                       'SELECT apartment_id, rented FROM apartments_owned WHERE owner = @owner',
                       {['@owner'] = xPlayer.getIdentifier()})
+
+    local last_property
+
     for k, property in pairs(available) do
         available[k].owned = false
         available[k].rented = false
+        available[k].parent = 0
 
+        -- assign owned properties to available
         for _, v in pairs(owned) do
             if v.apartment_id == property.id then
                 available[k].owned = true
                 available[k].rented = v.rented
             end
+        end
+
+        -- check if property is a child of previous property
+        if last_property ~= nil and last_property.name == property.name then
+            available[k].parent = last_property.id
+        end
+
+        if last_property == nil or last_property.name ~= property.name then
+            last_property = property
         end
     end
     cb(available, users[1].apartment_id)
