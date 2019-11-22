@@ -57,10 +57,27 @@ function CreateBlips()
 end
 
 function SetBlip(v)
+    if v.parent ~= 0 then
+        local parent = GetPropertyById(v.parent)
+        SetBlip(parent)
+        return
+    end
+
     local blipConfig = {}
     local blipText = ""
     if v.kind == Types.Condominium then
         blipText = "Apartment"
+
+        -- check childrens
+        if v.exit_marker == nil then
+            for _, child in pairs(Properties) do
+                if child.parent == v.id then
+                    if child.owned then v.owned = true end
+                    break
+                end
+            end
+        end
+
         if v.owned then
             blipConfig = Config.Blips.Condominiums.Owned
         else
@@ -83,9 +100,19 @@ end
 
 function SetOwned(id, value, rented)
     for k, v in pairs(Properties) do
-        if v.apartment_id == id then
+        if v.id == id then
             Properties[k].owned = value
             Properties[k].rented = rented
+            if v.parent ~= 0 then
+                print("check parent")
+                for pk, pv in pairs(Properties) do
+                    if pv.id == v.parent then
+                        Properties[pk].owned = value
+                        break
+                    end
+                end
+            end
+            break
         end
     end
 end
