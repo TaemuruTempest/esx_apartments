@@ -48,7 +48,9 @@ end
 
 function CreateBlips()
     for _, v in pairs(Properties) do
-        if v.enter_marker ~= nil then
+        if v.enter_marker ~= nil and
+            ((v.kind == Types.Condominium and Config.EnableCondominiums) or
+                (v.kind == Types.House and Config.EnableHouses)) then
             marker = StringToCoords(v.enter_marker)
             Blips[v.id] = AddBlipForCoord(marker.x, marker.y, marker.z)
             SetBlip(v)
@@ -85,17 +87,25 @@ function SetBlip(v)
         end
     end
 
-    if v.kind == Types.Condominium and Config.EnableCondominiums then
-        SetBlipSprite(Blips[v.id], blipConfig.Sprite)
-        SetBlipDisplay(Blips[v.id], blipConfig.Display)
-        SetBlipScale(Blips[v.id], blipConfig.Scale)
-        SetBlipColour(Blips[v.id], blipConfig.Colour)
-        SetBlipAsShortRange(Blips[v.id], true)
+    if v.kind == Types.House then
+        blipText = "House"
 
-        BeginTextCommandSetBlipName('STRING')
-        AddTextComponentString(blipText)
-        EndTextCommandSetBlipName(Blips[v.id])
+        if v.owned then
+            blipConfig = Config.Blips.Houses.Owned
+        else
+            blipConfig = Config.Blips.Houses.Available
+        end
     end
+
+    SetBlipSprite(Blips[v.id], blipConfig.Sprite)
+    SetBlipDisplay(Blips[v.id], blipConfig.Display)
+    SetBlipScale(Blips[v.id], blipConfig.Scale)
+    SetBlipColour(Blips[v.id], blipConfig.Colour)
+    SetBlipAsShortRange(Blips[v.id], true)
+
+    BeginTextCommandSetBlipName('STRING')
+    AddTextComponentString(blipText)
+    EndTextCommandSetBlipName(Blips[v.id])
 end
 
 function SetOwned(id, value, rented)
@@ -104,7 +114,6 @@ function SetOwned(id, value, rented)
             Properties[k].owned = value
             Properties[k].rented = rented
             if v.parent ~= 0 then
-                print("check parent")
                 for pk, pv in pairs(Properties) do
                     if pv.id == v.parent then
                         Properties[pk].owned = value

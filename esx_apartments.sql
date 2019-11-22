@@ -39,4 +39,10 @@ INSERT INTO `apartments_available` VALUES
 	(NULL, 'DellPerroHeights', 'Dell Perro Heights', 0, '-1447.85,-538.28,34.74,206.68', NULL, NULL, NULL, NULL, NULL, 0, 0, 0),
 	(NULL, 'DellPerroHeights', 'Apt. 4', 0, NULL, '-1452.79,-539.82,74.04,30.58', NULL, NULL, NULL, NULL, 1500, 800000, 50),
 	(NULL, 'DellPerroHeights', 'Apt. 7', 0, NULL, '-1450.07,-525.63,56.93,32.97', NULL, NULL, NULL, NULL, 1500, 800000, 50),
+	(NULL, 'RichardMajestic', 'Richard Majestic, Apt 2', 0, '-937.06,-379.45,38.96,106.63', '-913.24,-365.58,114.27,114.09', NULL, NULL, NULL, NULL, 2000, 1000000, 50),
+	(NULL, 'Tinsle Towers', 'Tinsle Towers, Apt 42', 0, '-614.54,45.53,43.59,179.3', '-603.76,58.89,98.2,86.34', NULL, NULL, NULL, NULL, 2000, 1000000, 50),
+	(NULL, 'EclipseTowers', 'EclipseTowers, Apt 3', 0, '-777.00,318.5,85.66,175.99', '-784.56,323.8,212.0,265.24', NULL, NULL, NULL, NULL, 2500, 1200000, 50),
+	(NULL, '3655 Wild Oats Drive', '3655 Wild Oats Drive', 1, '-175.71,502.49,137.42,73.94', '-174.15,497.03,137.67,188.06', NULL, NULL, NULL, NULL, 3000, 1500000, 50),
+	(NULL, '2044 North Conker Avenue', '2044 North Conker Avenue', 1, '346.97,441.08,147.70,293.58', '341.40,437.45,149.39,114.50', NULL, NULL, NULL, NULL, 3000, 1500000, 50),
+	(NULL, '2045 North Conker Avenue', '2045 North Conker Avenue', 1, '373.01,428.08,145.68,72.91', '373.60,422.88,145.91,164.92', NULL, NULL, NULL, NULL, 3000, 1500000, 50),
 ;
