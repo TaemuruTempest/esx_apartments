@@ -2,6 +2,7 @@ local Keys = {['E'] = 38}
 
 ESX = nil
 Properties = {}
+Blips = {}
 
 Types = {Condominiums = 0, Houses = 1, Motels = 2}
 TeleportType = {Enter = 0, Exit = 1}
@@ -47,26 +48,32 @@ end
 
 function CreateBlips()
     for _, v in pairs(Properties) do
-        local blipConfig = {}
-        if v.kind == Types.Condominiums then
+        marker = StringToCoords(v.enter_marker)
+        Blips[v.id] = AddBlipForCoord(marker.x, marker.y, marker.z)
+        SetBlip(v)
+    end
+end
+
+function SetBlip(v)
+    local blipConfig = {}
+    if v.kind == Types.Condominiums then
+        if v.owned then
+            blipConfig = Config.Blips.Condominiums.Owned
+        else
             blipConfig = Config.Blips.Condominiums.Available
         end
+    end
 
-        if v.kind == Types.Condominiums and Config.EnableCondominiums then
-            marker = StringToCoords(v.enter_marker)
+    if v.kind == Types.Condominiums and Config.EnableCondominiums then
+        SetBlipSprite(Blips[v.id], blipConfig.Sprite)
+        SetBlipDisplay(Blips[v.id], blipConfig.Display)
+        SetBlipScale(Blips[v.id], blipConfig.Scale)
+        SetBlipColour(Blips[v.id], blipConfig.Colour)
+        SetBlipAsShortRange(Blips[v.id], true)
 
-            local blip = AddBlipForCoord(marker.x, marker.y, marker.z)
-
-            SetBlipSprite(blip, blipConfig.Sprite)
-            SetBlipDisplay(blip, blipConfig.Display)
-            SetBlipScale(blip, blipConfig.Scale)
-            SetBlipColour(blip, blipConfig.Colour)
-            SetBlipAsShortRange(blip, true)
-
-            BeginTextCommandSetBlipName('STRING')
-            AddTextComponentString(v.label)
-            EndTextCommandSetBlipName(blip)
-        end
+        BeginTextCommandSetBlipName('STRING')
+        AddTextComponentString(v.label)
+        EndTextCommandSetBlipName(Blips[v.id])
     end
 end
 
@@ -119,8 +126,8 @@ function OpenMenu(v)
             v.owned = true
             v.rented = true
             SetOwned(v.id, true, true)
+            SetBlip(v)
             OpenMenu(v)
-            -- TODO: replace blip, reopen menu
         end
 
         -- Sell
@@ -129,6 +136,7 @@ function OpenMenu(v)
             v.owned = false
             v.rented = false
             SetOwned(v.id, false, false)
+            SetBlip(v)
             OpenMenu(v)
         end
 
