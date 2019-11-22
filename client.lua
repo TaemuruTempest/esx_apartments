@@ -50,7 +50,8 @@ function CreateBlips()
     for _, v in pairs(Properties) do
         if v.enter_marker ~= nil and
             ((v.kind == Types.Condominium and Config.EnableCondominiums) or
-                (v.kind == Types.House and Config.EnableHouses)) then
+                (v.kind == Types.House and Config.EnableHouses) or
+                (v.kind == Types.Motel and Config.EnableMotels)) then
             marker = StringToCoords(v.enter_marker)
             Blips[v.id] = AddBlipForCoord(marker.x, marker.y, marker.z)
             SetBlip(v)
@@ -95,6 +96,11 @@ function SetBlip(v)
         else
             blipConfig = Config.Blips.Houses.Available
         end
+    end
+
+    if v.kind == Types.Motel then
+        blipText = "Motel"
+        blipConfig = Config.Blips.Motels
     end
 
     SetBlipSprite(Blips[v.id], blipConfig.Sprite)
@@ -160,19 +166,22 @@ function OpenPropertyMenu(v)
             value = 'sell'
         })
     else
-        if v.price_rent >= 0 then
+        if v.price_rent > 0 then
             table.insert(elements, {
                 label = string.format('Rent ($%d)', v.price_rent),
                 value = 'rent'
             })
         end
-        if v.price_buy >= 0 then
+        if v.price_buy > 0 then
             table.insert(elements, {
                 label = string.format('Buy ($%d)', v.price_buy),
                 value = 'buy'
             })
         end
-        table.insert(elements, {label = 'Visit', value = 'visit'})
+
+        if v.kind ~= Types.Motel then
+            table.insert(elements, {label = 'Visit', value = 'visit'})
+        end
     end
 
     ESX.UI.Menu.CloseAll()
@@ -191,7 +200,12 @@ function OpenPropertyMenu(v)
             v.rented = true
             SetOwned(v.id, true, true)
             SetBlip(v)
-            OpenPropertyMenu(v)
+
+            if v.kind == Types.Motel then
+                TeleportProperty(TeleportType.Enter, v)
+            else
+                OpenPropertyMenu(v)
+            end
         end
 
         -- Sell
@@ -279,9 +293,9 @@ Citizen.CreateThread(function()
 
                     -- show action text
                     if distance < 1.0 and IsControlJustReleased(0, Keys['E']) then
-                        -- Condominium: show child properties
-                        if v.kind == Types.Condominium and v.parent == 0 and
-                            v.exit_marker == nil then
+                        -- Condominium/Motel: show child properties
+                        if (v.kind == Types.Condominium or v.kind == Types.Motel) and
+                            v.parent == 0 and v.exit_marker == nil then
                             OpenCondominiumMenu(v)
                         else
                             OpenPropertyMenu(v)
@@ -300,6 +314,10 @@ Citizen.CreateThread(function()
                     ShowMarker(marker, Config.Markers.Exit)
 
                     if distance < 1.0 and IsControlJustReleased(0, Keys['E']) then
+                        if v.kind == Types.Motel then
+                            TriggerServerEvent(
+                                'esx_apartments:unassignProperty', v.id)
+                        end
                         TeleportProperty(TeleportType.Exit, v)
                     end
                 end

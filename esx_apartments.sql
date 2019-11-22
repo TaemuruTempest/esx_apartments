@@ -55,3 +55,30 @@ INSERT INTO `apartments_available` VALUES
 	(NULL, '2677 Whispymound Drive', '2677 Whispymound Drive', 1, '119.30,564.55,183.96,6.17', '117.17,559.40,184.3,185.31', NULL, NULL, NULL, NULL, 3000, 1500000, 50),
 	(NULL, '2133 Mad Wayne Thunder', '2133 Mad Wayne Thunder', 1, '-1294.49,455.13,97.42,11.75', '-1289.76,449.02,97.9,186.63', NULL, NULL, NULL, NULL, 3000, 1500000, 50),
 ;
+
+-- Motels
+INSERT INTO `apartments_available` VALUES
+	(NULL, 'PinkCageMotel', 'PinkCage Motel', 2, '312.94,-218.45,54.22,340.15', NULL, NULL, NULL, NULL, NULL, 50, 0, 0),
+	(NULL, 'PinkCageMotel', 'Room 1', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 50, 0, 0),
+	(NULL, 'PinkCageMotel', 'Room 2', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 50, 0, 0),
+	(NULL, 'PinkCageMotel', 'Room 3', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 50, 0, 0),
+	(NULL, 'PinkCageMotel', 'Room 4', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 50, 0, 0),
+	(NULL, 'PinkCageMotel', 'Room 5', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 50, 0, 0),
+	(NULL, 'PinkCageMotel', 'Room 6', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 50, 0, 0),
+	(NULL, 'PinkCageMotel', 'Room 7', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 50, 0, 0),
+	(NULL, 'PinkCageMotel', 'Room 8', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 50, 0, 0),
+	(NULL, 'PinkCageMotel', 'Room 9', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 50, 0, 0),
+	(NULL, 'PinkCageMotel', 'Room 10', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 50, 0, 0),
+	(NULL, 'BayviewLodge', 'Bayview Lodge', 2, '-683.05,5771.12,17.51,67.55', NULL, NULL, NULL, NULL, NULL, 30, 0, 0),
+	(NULL, 'BayviewLodge', 'Room 1', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 30, 0, 0),
+	(NULL, 'BayviewLodge', 'Room 2', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 30, 0, 0),
+	(NULL, 'BayviewLodge', 'Room 3', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 30, 0, 0),
+	(NULL, 'BayviewLodge', 'Room 4', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 30, 0, 0),
+	(NULL, 'BayviewLodge', 'Room 5', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 30, 0, 0),
+	(NULL, 'BayviewLodge', 'Room 6', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 30, 0, 0),
+	(NULL, 'BayviewLodge', 'Room 7', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 30, 0, 0),
+	(NULL, 'BayviewLodge', 'Room 8', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 30, 0, 0),
+	(NULL, 'BayviewLodge', 'Room 9', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 30, 0, 0),
+	(NULL, 'BayviewLodge', 'Room 10', 2, NULL, '151.44,-1007.49,-99.00,1.96', NULL, NULL, NULL, NULL, 30, 0, 0)
+;
+
