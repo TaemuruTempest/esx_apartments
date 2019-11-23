@@ -272,7 +272,7 @@ function OpenGarageMenu(p)
         ESX.UI.Menu.CloseAll()
         ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'garage', {
             title = 'Garage',
-            align = 'top-left',
+            align = Config.MenuPosition,
             elements = elements
         }, function(data, menu)
             menu.close()
