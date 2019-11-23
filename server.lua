@@ -44,8 +44,8 @@ ESX.RegisterServerCallback('esx_apartments:getProperties', function(source, cb)
 end)
 
 -- Rent/Buy specified property
-RegisterServerEvent('esx_apartments:assignProperty')
-AddEventHandler('esx_apartments:assignProperty', function(id, rented)
+ESX.RegisterServerCallback('esx_apartments:assignProperty',
+                           function(source, cb, id, rented, payment_method)
     local xPlayer = ESX.GetPlayerFromId(source)
     local identifier = xPlayer.getIdentifier()
 
@@ -76,6 +76,8 @@ AddEventHandler('esx_apartments:assignProperty', function(id, rented)
         }, function()
             xPlayer.showNotification('Thank you for shopping with us')
         end)
+
+    cb(true)
 end)
 
 -- Sell specified property

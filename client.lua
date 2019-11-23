@@ -220,17 +220,19 @@ function OpenPropertyMenu(v)
 
         -- Rent
         if data.current.value == 'rent' then
-            TriggerServerEvent('esx_apartments:assignProperty', v.id, true)
-            v.owned = true
-            v.rented = true
-            SetOwned(v.id, true, true)
-            SetBlip(v)
+            ESX.TriggerServerCallback('esx_apartments:assignProperty',
+                                      function(result)
+                v.owned = true
+                v.rented = true
+                SetOwned(v.id, true, true)
+                SetBlip(v)
 
-            if v.kind == Types.Motel then
-                TeleportProperty(TeleportType.Enter, v)
-            else
-                OpenPropertyMenu(v)
-            end
+                if v.kind == Types.Motel then
+                    TeleportProperty(TeleportType.Enter, v)
+                else
+                    OpenPropertyMenu(v)
+                end
+            end, v.id, true, nil)
         end
 
         -- Sell
