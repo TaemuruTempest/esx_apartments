@@ -21,7 +21,7 @@ Config.Blips = {
     -- Motels
     Motels = {Sprite = 476, Display = 4, Scale = 1.0, Colour = 0},
     -- Garages
-    Garages = {Sprite = 357, Display = 4, Scale = 1.0, Colour = 0}
+    Garages = {Sprite = 289, Display = 4, Scale = 1.0, Colour = 0}
 }
 
 Config.Markers = {
