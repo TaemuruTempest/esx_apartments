@@ -13,7 +13,7 @@ CREATE TABLE `apartments_available` (
 	`room_menu` VARCHAR(255) DEFAULT NULL,
 	`price_rent` INT(11) DEFAULT 0,
 	`price_buy` INT(11) DEFAULT 0,
-	`sell_back` INT(11) DEFAULT 50,
+	`cash_back` INT(11) DEFAULT 50,
 	PRIMARY KEY (`id`)
 );
 

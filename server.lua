@@ -2,6 +2,13 @@ ESX = nil
 
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
+function GetPropertyById(id)
+    local properties = MySQL.Sync.fetchAll(
+                           'SELECT * FROM apartments_available WHERE id = @id',
+                           {['@id'] = id})
+    return properties[1]
+end
+
 -- Check if membership already exists
 ESX.RegisterServerCallback('esx_apartments:getProperties', function(source, cb)
     local xPlayer = ESX.GetPlayerFromId(source)
@@ -53,17 +60,28 @@ ESX.RegisterServerCallback('esx_apartments:assignProperty',
     local result = MySQL.Sync.fetchAll(
                        'SELECT id, rented FROM apartments_owned WHERE owner = @identifier AND apartment_id = @apartment_id',
                        {['@identifier'] = identifier, ['@apartment_id'] = id})
-    if #result > 0 then
-        -- if we have already rented this property and the current option is to buy
-        -- substract money and update the rented flag
-        if result[1].rented == 1 and rented == 0 then
-            --
+    if #result > 0 then return end
+
+    -- get property
+    local property = GetPropertyById(id)
+
+    -- check and substract money
+    if rented == false then
+        local playerMoney = 0
+        if payment_method == 'cash' then playerMoney = xPlayer.getMoney() end
+        if payment_method == 'bank' then playerMoney = xPlayer.getBank() end
+        if playerMoney < property.price_buy then
+            cb(false)
+            return
         end
 
-        return
+        if payment_method == 'cash' then
+            xPlayer.removeMoney(property.price_buy)
+        end
+        if payment_method == 'bank' then
+            xPlayer.removeAccountMoney('bank', property.price_buy)
+        end
     end
-
-    -- TODO: check and substract money
 
     -- Set apartment owner
     MySQL.Async.insert(
@@ -71,7 +89,8 @@ ESX.RegisterServerCallback('esx_apartments:assignProperty',
         {
             ['@apartment_id'] = id,
             ['@owner'] = identifier,
-            ['@price'] = 1, -- TODO: get rent/buy price
+            ['@price'] = rented == true and property.price_rent or
+                property.price_buy,
             ['@rented'] = rented
         }, function()
             xPlayer.showNotification('Thank you for shopping with us')
@@ -86,13 +105,18 @@ AddEventHandler('esx_apartments:unassignProperty', function(id)
     local xPlayer = ESX.GetPlayerFromId(source)
     local identifier = xPlayer.getIdentifier()
 
-    -- Check if this property is already owned/rented
+    -- Check if this property is owned/rented
     local result = MySQL.Sync.fetchAll(
-                       'SELECT id, rented FROM apartments_owned WHERE owner = @identifier AND apartment_id = @apartment_id',
+                       'SELECT id, price, rented FROM apartments_owned WHERE owner = @identifier AND apartment_id = @apartment_id',
                        {['@identifier'] = identifier, ['@apartment_id'] = id})
     if #result > 0 then
-        -- TODO: if owned, return defined sell_back % to player
-        if result[1].rented == 0 then end
+        local property = GetPropertyById(id)
+
+        -- if owned, return defined sell_back % to player
+        if result[1].rented == false and property.cash_back > 0 then
+            xPlayer.addAccountMoney('bank', result[1].price *
+                                        (property.cash_back / 100.0))
+        end
 
         MySQL.Sync.execute(
             'DELETE FROM apartments_owned WHERE owner = @identifier AND apartment_id = @apartment_id',

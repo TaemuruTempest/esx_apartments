@@ -188,7 +188,7 @@ function OpenPropertyMenu(v)
     if v.owned then
         table.insert(elements, {label = 'Enter', value = 'enter'})
         table.insert(elements, {
-            label = v.rented and 'End contract' or 'Sell',
+            label = v.rented == true and 'End contract' or 'Sell',
             value = 'sell'
         })
     else
@@ -235,6 +235,9 @@ function OpenPropertyMenu(v)
             end, v.id, true, nil)
         end
 
+        -- Buy
+        if data.current.value == 'buy' then OpenBuyMenu(v) end
+
         -- Sell
         if data.current.value == 'sell' then
             TriggerServerEvent('esx_apartments:unassignProperty', v.id)
@@ -249,6 +252,36 @@ function OpenPropertyMenu(v)
         if data.current.value == 'enter' or data.current.value == 'visit' then
             TeleportProperty(TeleportType.Enter, v)
         end
+    end)
+end
+
+function OpenBuyMenu(v)
+    local elements = {
+        {label = 'Cash', value = 'cash'}, {label = 'Bank', value = 'bank'}
+    }
+    ESX.UI.Menu.CloseAll()
+    ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'buy_property', {
+        title = 'Payment Method',
+        align = Config.MenuPosition,
+        elements = elements
+    }, function(data, menu)
+        menu.close()
+
+        ESX.TriggerServerCallback('esx_apartments:assignProperty',
+                                  function(result)
+            if result == false then
+                ESX.ShowNotification('Not enough money')
+                return
+            end
+
+            v.owned = true
+            v.rented = false
+            SetOwned(v.id, true, false)
+            SetBlip(v)
+
+            OpenPropertyMenu(v)
+        end, v.id, false, data.current.value)
+
     end)
 end
 

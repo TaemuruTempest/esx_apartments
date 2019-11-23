@@ -21,11 +21,12 @@
 - Define apartments blips/markers via database
 - Rent motel rooms
 - Enable garage when the property is owned / rented
+- Buy/Rent apartments / flats at specified block buildings
+- Sell back at defined % rates
 
 ### Planned features (WIP)
 
-- Buy/Rent apartments / flats at specified block buildings
-- Sell back at defined % rates
+- Rent: automatically pay the daily rent at scheduled hour
 - Key management: option to give them to other players
 - doorbell: call player's phone
 - invite other players (share house inventory)
