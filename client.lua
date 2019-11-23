@@ -452,10 +452,9 @@ Citizen.CreateThread(function()
                                 vehicleProps.bodyHealth =
                                     GetVehicleBodyHealth(vehicle)
 
-                                print("")
                                 ESX.TriggerServerCallback('eden_garage:stockv',
                                                           function(result)
-                                    if result then
+                                    if result == true then
                                         ESX.Game.DeleteVehicle(vehicle)
                                         TriggerServerEvent(
                                             'eden_garage:modifystate',
